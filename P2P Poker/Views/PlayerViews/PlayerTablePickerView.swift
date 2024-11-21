@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlayerTablePickerView: View {
-    @ObservedObject var player: PlayerManager
+    @State var player: PlayerManager
     
     var body: some View {
         List {
@@ -26,7 +26,7 @@ struct PlayerTablePickerView: View {
                 )
             }
         }
-        NavigationLink(destination: PlayerGameView().environmentObject(player).navigationBarBackButtonHidden(true), label: {
+        NavigationLink(destination: PlayerGameView().environment(player), label: {
             Text("Join Game")
         })
         .disabled(player.table == nil)

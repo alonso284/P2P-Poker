@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 import MultipeerConnectivity
 
+// TODO environment values for preferences
+
 struct ContentView: View {
 //    @Environment(\.modelContext) private var modelContext
 //    @Query private var items: [Item]

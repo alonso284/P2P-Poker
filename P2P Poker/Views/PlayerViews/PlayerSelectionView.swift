@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PlayerSelectionView: View {
-    @State var name = ""
+    @State var name = UUID().uuidString
     @State var systemImage = "vision.pro"
     let emojiOptions = ["vision.pro", "person.crop.square", "american.football", "cloud.bolt"]
     

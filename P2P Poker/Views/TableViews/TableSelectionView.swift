@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TableSelectionView: View {
-    @State var name = ""
+    @State var name = "TABLE"
     
     var body: some View {
         Form {
@@ -22,5 +22,7 @@ struct TableSelectionView: View {
 }
 
 #Preview {
-    TableSelectionView()
+    NavigationStack {
+        TableSelectionView()
+    }
 }

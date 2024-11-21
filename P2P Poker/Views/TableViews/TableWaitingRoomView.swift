@@ -8,23 +8,23 @@
 import SwiftUI
 
 struct TableWaitingRoomView: View {
-    @StateObject var table: TableManager
+    @State var table: TableManager
     
     var body: some View {
         List {
-            ForEach(table.players, id: \.self){
+            ForEach(self.table.playersInSession, id: \.self){
                 player in
                 Text(player.displayName)
             }
         }
         NavigationLink("Start Game", destination: {
-            TableGameView().environmentObject(table)
+            TableGameView().environment(table)
         })
     }
 }
 
 #Preview {
     NavigationStack {
-        TableWaitingRoomView(table: TableManager(name: "Table1"))
+        TableWaitingRoomView(table: TableManager(name: "Table"))
     }
 }
