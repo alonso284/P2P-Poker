@@ -18,140 +18,136 @@ struct PlayerGameView: View {
         (value: 1000, color: .yellow),
         (value: 5000, color: .orange)
     ]
-    @Environment(PlayerManager.self) var player: PlayerManager
+    @Binding var playerVM: PlayerViewModel
     @State private var bet: Double = 0
     @State private var showingCard: Bool = false
     @State private var helpView: Bool = false
     
-    
     var body: some View {
-        List {
-            Section("Player") {
-//                HStack {
-//                    Spacer()
-//                    // FIXME Looks bad
-//                    VStack {
-//                        Image(systemName: player.avatar)
-//                            .font(.largeTitle)
-//                            .padding()
-//                        Text(player.playerID.displayName)
-//                            .font(.body)
-//                    }
-//                    Spacer()
-//                }
-//                .padding()
-                HStack {
-                    Spacer()
-                    VStack {
-                        Spacer()
-                        Text("\(player.balance)")
-                            .font(.largeTitle)
-                            .bold()
-                        Spacer()
-                        Text("Current Balance")
-                    }
-                    Spacer()
-                }
-                .padding()
-            }
+        if let player = playerVM.playerManager {
             
-            Section("Current Round"){
-                if let hand = self.player.hand {
+            List {
+                Section(player.name) {
+                    //                HStack {
+                    //                    Spacer()
+                    //                    // FIXME Looks bad
+                    //                    VStack {
+                    //                        Image(systemName: player.avatar)
+                    //                            .font(.largeTitle)
+                    //                            .padding()
+                    //                        Text(player.playerID.displayName)
+                    //                            .font(.body)
+                    //                    }
+                    //                    Spacer()
+                    //                }
+                    //                .padding()
                     HStack {
                         Spacer()
-                        if showingCard {
-                            
-                            CardView(card: hand.0)
+                        VStack {
                             Spacer()
-                            CardView(card: hand.1)
-                        } else {
-                            ContentUnavailableView {
-                                Label("Click to show hand", systemImage: "hands.sparkles")
-                            }
+                            Text("\(player.balance)")
+                                .font(.largeTitle)
+                                .bold()
+                            Spacer()
+                            Text("Current Balance")
                         }
                         Spacer()
                     }
-                    .onTapGesture {
-                        showingCard.toggle()
-                    }
+                    .padding()
+                }
                 
-                    
-                    if let tableRaise = self.player.tableRaise {
+                Section("Current Round"){
+                    if let hand = player.hand {
                         HStack {
                             Spacer()
-                            Text("Amount to complete: \(tableRaise)")
+                            if showingCard {
+                                
+                                CardView(card: hand.0)
+                                Spacer()
+                                CardView(card: hand.1)
+                            } else {
+                                ContentUnavailableView {
+                                    Label("Click to show hand", systemImage: "hands.sparkles")
+                                }
+                            }
                             Spacer()
                         }
-                        // Raise
-                        if tableRaise <= self.player.balance {
-                            Slider(value: $bet, in: Double(0)...Double(self.player.balance))
-                            Button("Raise \(Int(bet))"){
-                                self.player.playTurn(amount: Int(bet))
-                            }
-                            .onAppear(){ bet = 0.0 }
+                        .onTapGesture {
+                            showingCard.toggle()
                         }
-                        // Call
-                        if tableRaise != 0 && tableRaise <= self.player.balance {
-                            Button("Call"){
-                                self.player.playTurn(amount: tableRaise)
-                            }
-                        }
-                        // Currently not available
-                        // All-In
-//                        if currentBid >= self.player.getBalance() {
-//                            Button("All-In"){
-//                                self.player.playTurn(amount: self.player.getBalance())
-//                            }
-//                        }
                         
-                        if tableRaise == 0 {
-                            Button("Check"){
-                                self.player.playTurn(amount: 0)
+                        
+                        if let tableRaise = player.tableRaise {
+                            HStack {
+                                Spacer()
+                                Text("Amount to complete: \(tableRaise)")
+                                Spacer()
                             }
-                        } else {
-                            Button("Fold"){
-                                self.player.playTurn(amount: 0)
+                            // Raise
+                            if tableRaise <= player.balance {
+                                Slider(value: $bet, in: Double(0)...Double(player.balance))
+                                Button("Raise \(Int(bet))"){
+                                    player.playTurn(amount: Int(bet))
+                                }
+                                .onAppear(){ bet = 0.0 }
                             }
+                            // Call
+                            if tableRaise != 0 && tableRaise <= player.balance {
+                                Button("Call"){
+                                    player.playTurn(amount: tableRaise)
+                                }
+                            }
+                            // Currently not available
+                            // All-In
+                            //                        if currentBid >= self.player.getBalance() {
+                            //                            Button("All-In"){
+                            //                                self.player.playTurn(amount: self.player.getBalance())
+                            //                            }
+                            //                        }
+                            
+                            if tableRaise == 0 {
+                                Button("Check"){
+                                    player.playTurn(amount: 0)
+                                }
+                            } else {
+                                Button("Fold"){
+                                    player.playTurn(amount: 0)
+                                }
+                            }
+                        }
+                        else {
+                            ContentUnavailableView {
+                                Label("Waiting for turn", systemImage: "clock")
+                            }
+                            
                         }
                     }
                     else {
                         ContentUnavailableView {
-                            Label("Waiting for turn", systemImage: "clock")
+                            Label("Starting round", systemImage: "hands.sparkles")
                         }
-                        
                     }
-                }
-                else {
-                    ContentUnavailableView {
-                        Label("Starting round", systemImage: "hands.sparkles")
+                    Button("Ping Table"){
+                        player.ping()
                     }
-                }
-                Button("Ping Table"){
-                    self.player.ping()
+                    
                 }
                 
             }
-            
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            Button(action: {
-                helpView.toggle()
-            }, label: {
-                Image(systemName: "questionmark.circle")
-            })
-        }
-        .sheet(isPresented: $helpView) {
-            ExamplesView()
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                Button(action: {
+                    helpView.toggle()
+                }, label: {
+                    Image(systemName: "questionmark.circle")
+                })
+            }
+            .sheet(isPresented: $helpView) {
+                ExamplesView()
+            }
+        } else {
+            ProgressView()
         }
         
-    }
-}
-
-#Preview {
-    @Previewable var player = PlayerManager(user: "Alonso", avatar: "vision.pro")
-    NavigationStack {
-        PlayerGameView()
-            .environment(player)
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PlayerSelectionView: View {
+    @Binding var playerVM: PlayerViewModel
     @State var name = UUID().uuidString
     @State var systemImage = "vision.pro"
     let emojiOptions = ["vision.pro", "person.crop.square", "american.football", "cloud.bolt"]
@@ -15,28 +16,15 @@ struct PlayerSelectionView: View {
     var body: some View {
         Form {
             TextField("username", text: $name)
-            // Picker
             Picker(selection: $systemImage, label: Text("Pick your avatar")) {
                 ForEach(emojiOptions, id: \.self) { emoji in
                     Image(systemName: emoji).tag(emoji)
                 }
             }
         }
-        NavigationLink(destination: {
-            if !name.isEmpty {
-                PlayerTablePickerView(player: PlayerManager(user: name, avatar: systemImage))
-            } else {
-                EmptyView()
-            }
-        }) {
-            Text("Start Game")
+        Button("Start") {
+            playerVM.initialize(user: name, avatar: systemImage)
         }
         .disabled(name.isEmpty)
-    }
-}
-
-#Preview {
-    NavigationStack {
-        PlayerSelectionView()
     }
 }

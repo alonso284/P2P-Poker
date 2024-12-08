@@ -23,6 +23,9 @@ class PlayerManager: NSObject {
     /// Player Metadata
     private let playerID: MCPeerID
     private var session: MCSession
+    var name: String {
+        playerID.displayName
+    }
     
     /// Discovery varaibles (for looking for tables)
     private let discovery: MCNearbyServiceBrowser
@@ -32,7 +35,7 @@ class PlayerManager: NSObject {
     // FIXME: Make this cleaner
     init(user: String, avatar: String) {
         self.avatar = avatar
-        self.playerID = MCPeerID(displayName: UIDevice.current.name)
+        self.playerID = MCPeerID(displayName: user)
         self.session = MCSession(peer: self.playerID, securityIdentity: nil, encryptionPreference: MCEncryptionPreference.none)
         self.discovery = MCNearbyServiceBrowser(peer: self.playerID, serviceType: "P2PPoker")
         super.init()
@@ -122,6 +125,10 @@ extension PlayerManager: MCSessionDelegate {
                     self.discovery.stopBrowsingForPeers()
                 }
             case .notConnected:
+                DispatchQueue.main.async {
+                    self.table = nil
+                    self.discovery.startBrowsingForPeers()
+                }
                 print("Disconnected from table")
             case .connecting:
                 print("Connecting to table")

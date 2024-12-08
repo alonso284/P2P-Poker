@@ -22,11 +22,11 @@ struct ContentView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    NavigationLink(destination: TableSelectionView()) {
+                    NavigationLink(destination: TableView()) {
                         Text("Host name")
                     }
                     Spacer()
-                    NavigationLink(destination: PlayerSelectionView()) {
+                    NavigationLink(destination: PlayerView()) {
                         Text("Join name")
                     }
                     Spacer()

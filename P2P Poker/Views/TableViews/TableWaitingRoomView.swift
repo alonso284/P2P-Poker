@@ -8,23 +8,27 @@
 import SwiftUI
 
 struct TableWaitingRoomView: View {
-    @State var table: TableManager
+    @Binding var tableVM: TableViewModel
     
     var body: some View {
-        List {
-            ForEach(self.table.playersInSession, id: \.self){
-                player in
-                Text(player.displayName)
+        if let table = self.tableVM.tableManager {
+            List {
+                ForEach(table.playersInSession, id: \.self){
+                    player in
+                    Text(player.displayName)
+                }
             }
+            Button("Start Game"){
+                do {
+                    try table.beginGame()
+                } catch {
+                    print(error)
+                }
+                
+            }
+        } else {
+            ProgressView()
         }
-        NavigationLink("Start Game", destination: {
-            TableGameView().environment(table)
-        })
-    }
-}
-
-#Preview {
-    NavigationStack {
-        TableWaitingRoomView(table: TableManager(name: "Table"))
+        
     }
 }

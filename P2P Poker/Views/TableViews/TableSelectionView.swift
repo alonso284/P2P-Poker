@@ -8,21 +8,16 @@
 import SwiftUI
 
 struct TableSelectionView: View {
-    @State var name = "TABLE"
+    @Binding var tableVM: TableViewModel
+    @State var name = "table"
     
     var body: some View {
         Form {
             TextField("username", text: $name)
         }
-        NavigationLink(destination: TableWaitingRoomView(table: TableManager(name: name)).navigationBarBackButtonHidden(true)) {
-            Text("Setup Table")
+        Button("Start") {
+            tableVM.initialize(name: name)
         }
         .disabled(name.isEmpty)
-    }
-}
-
-#Preview {
-    NavigationStack {
-        TableSelectionView()
     }
 }

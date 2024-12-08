@@ -137,7 +137,7 @@ class TableManager: NSObject {
     // FIXME: Cleanup
     init(name: String) {
         // FIXME: Name customization
-        self.tableID = MCPeerID(displayName: UUID().uuidString)
+        self.tableID = MCPeerID(displayName: name)
         self.session = MCSession(peer: self.tableID, securityIdentity: nil, encryptionPreference: MCEncryptionPreference.none)
         self.advertiser = MCNearbyServiceAdvertiser(peer: self.tableID, discoveryInfo: nil, serviceType: "P2PPoker")
         super.init()
